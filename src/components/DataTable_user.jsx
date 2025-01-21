@@ -40,31 +40,42 @@ function DataTable_user() {
 	};
 	return (
 		<>
-			<DataTable className="display">
-				<thead>
+			<DataTable className="display w-full text-left mx-4">
+				<thead className="bg-gray-200">
 					<tr>
-						<th>Name</th>
-						<th>Age</th>
-						<th>Email</th>
-						<th>Phone</th>
-						<th>Address</th>
-						<th>State</th>
-						<th>City</th>
+						<th className="p-2">Name</th>
+						<th className="p-2">Age</th>
+						<th className="p-2">Email</th>
+						<th className="p-2">Phone</th>
+						<th className="p-2">Address</th>
+						<th className="p-2">State</th>
+						<th className="p-2">City</th>
 					</tr>
 				</thead>
 				<tbody>
 					{newUserData.map((row, index) => (
-						<tr key={index} onClick={() => handleRowClick(row[2])}>
+						<tr
+							key={index}
+							onClick={() => handleRowClick(row[2])}
+							className="hover:bg-gray-100 cursor-pointer"
+						>
 							{/* row[2] is the email */}
 							{row.map((cell, cellIndex) => (
-								<td key={cellIndex}>{cell}</td>
+								<td key={cellIndex} className="p-2 border-b">
+									{cell}
+								</td>
 							))}
 						</tr>
 					))}
 				</tbody>
 			</DataTable>
 
-			<button onClick={() => navigate("/")}>Back to Entry Form</button>
+			<button
+				onClick={() => navigate("/")}
+				className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+			>
+				Back to Entry Form
+			</button>
 		</>
 	);
 }

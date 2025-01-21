@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux"; // useDispatch allows us to dispatch Redux actions
 import { addUser, logoutUser, ModifyUsers } from "./../redux/action"; // Import the addUser action creator
+import {ErrorBoundary} from "react-error-boundary";
 
 const Entryform = () => {
 	const navigate = useNavigate();
@@ -127,128 +128,144 @@ const Entryform = () => {
 		dispatch(logoutUser());
 	};
 	return (
-		<form onSubmit={handleSubmit}>
+		<form onSubmit={handleSubmit} className="max-w-lg mx-auto p-8 bg-white shadow-md rounded-lg">
 			{/*Name Input Field */}
-			<div>
-			<Child value="Hello World12" />
-				<label>Name: </label>
+			<ErrorBoundary fallback={<div>error</div>}>
+				<Suspense fallback={<div>Loading...</div>}>
+					<Child value="Hello World12" />
+				</Suspense>
+			</ErrorBoundary>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
 				<input
 					type="text"
 					name="name"
 					value={formData.name}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.name && <span>{errors.name}</span>}{" "}
-				{/* Display validation error for 'name' */}
+				{errors.name && <span className="text-red-500 text-xs italic">{errors.name}</span>}
 			</div>
 			{/* Age Input Field*/}
-			<div>
-				<label> Age: </label>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Age:</label>
 				<input
 					type="number"
 					name="age"
 					value={formData.age}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.age && <span>{errors.age}</span>}{" "}
-				{/* Display validation error for 'age' */}
+				{errors.age && <span className="text-red-500 text-xs italic">{errors.age}</span>}
 			</div>
 			{/*Email Input Field*/}
-			<div>
-				<label>Email: </label>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
 				<input
 					type="email"
 					name="email"
 					value={formData.email}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.email && <span>{errors.email}</span>}{" "}
-				{/* Display validation error for */}
+				{errors.email && <span className="text-red-500 text-xs italic">{errors.email}</span>}
 			</div>
 			{/*Phone Input Field*/}
-			<div>
-				<label>Phone: </label>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Phone:</label>
 				<input
 					type="tel"
 					name="phone"
 					value={formData.phone}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.phone && <span>{errors.phone}</span>}{" "}
-				{/* Display validation error for 'phone' */}
+				{errors.phone && <span className="text-red-500 text-xs italic">{errors.phone}</span>}
 			</div>
 			{/* Address Input Field */}
-			<div>
-				<label> Address:</label>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Address:</label>
 				<input
 					type="text"
 					name="address"
 					value={formData.address}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.address && <span>{errors.address}</span>}{" "}
-				{/* Display validation error for 'address' */}
+				{errors.address && <span className="text-red-500 text-xs italic">{errors.address}</span>}
 			</div>
 			{/*State Dropdown */}
-			<div>
-				<label>State:</label>
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">State:</label>
 				<input
 					type="text"
 					name="state"
 					value={formData.state}
-					readOnly // Make the input read-only so users cannot edit it directly.
+					readOnly
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.state && <span>{errors.state}</span>}{" "}
-				{/* Display validation error for 'state' */}
+				{errors.state && <span className="text-red-500 text-xs italic">{errors.state}</span>}
 			</div>
-
 			{/* City Dropdown */}
-			<div>
-				<label>City:</label>
-				<select name="city" value={formData.city} onChange={handleChange}>
+			<div className="mb-4">
+				<label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-2">City:</label>
+				<select
+					id="city"
+					name="city"
+					value={formData.city}
+					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline appearance-none"
+				>
 					<option value="">Select City</option>
-					{/* Dynamically populate cities based on the selected state */}
 					{Object.keys(statesAndCities).map((city) => (
 						<option key={city} value={city}>
 							{city}
 						</option>
 					))}
 				</select>
-				{errors.city && <span>{errors.city}</span>}{" "}
-				{/* Display validation error for 'city' */}
+				{errors.city && <span className="text-red-500 text-xs italic">{errors.city}</span>}
 			</div>
-			<div>
-				<label>Password: </label>
+			{/* Password Input Field */}
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Password:</label>
 				<input
 					type="password"
 					name="password"
 					value={formData.password}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.password && <span>{errors.password}</span>}{" "}
-				{/* Display validation error for */}
+				{errors.password && <span className="text-red-500 text-xs italic">{errors.password}</span>}
 			</div>
-
-			<div>
-				<label>Confirm Password: </label>
+			{/* Confirm Password Input Field */}
+			<div className="mb-4">
+				<label className="block text-gray-700 text-sm font-bold mb-2">Confirm Password:</label>
 				<input
 					type="password"
 					name="confirmPassword"
 					value={formData.confirmPassword}
 					onChange={handleChange}
+					className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
-				{errors.confirmPassword && <span>{errors.confirmPassword}</span>}{" "}
-				{/* Display validation error for */}
+				{errors.confirmPassword && <span className="text-red-500 text-xs italic">{errors.confirmPassword}</span>}
 			</div>
-
 			{/* Submit Button */}
-			<button type="submit">Submit</button>
-			<button onClick={logout} type="button">
-				Log out
-			</button>
+			<div className="flex items-center justify-between">
+				<button
+					type="submit"
+					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				>
+					Submit
+				</button>
+				<button
+					onClick={logout}
+					type="button"
+					className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				>
+					Log out
+				</button>
+			</div>
 		</form>
-
-
 	);
 };
 const dummy = null;

@@ -25,18 +25,18 @@ const Navbar = () => {
 	};
 
 	return (
-		<nav style={styles.navbar}>
-			<div style={styles.navContent}>
-				<span style={styles.greeting}>
+		<nav className="bg-gray-800 p-4 flex justify-end items-center text-white">
+			<div className="flex items-center">
+				<span className="mr-4">
 					Hello {loggedInUser.name} {/* Display the user's name */}
 				</span>
-				<div style={styles.dropdown}>
-					<button style={styles.dropbtn} onClick={toggleDropdown}>
+				<div className="relative inline-block">
+					<button className="bg-transparent border-none text-white cursor-pointer" onClick={toggleDropdown}>
 						▼
 					</button>
 					{dropdownOpen && ( // Conditionally render dropdown content
-						<div style={styles.dropdownContent}>
-							<button onClick={handleLogout}>Log Out</button>
+						<div className="absolute right-0 bg-white text-black min-w-[160px] shadow-lg z-10">
+							<button className="w-full text-left px-4 py-2 hover:bg-gray-200" onClick={handleLogout}>Log Out</button>
 						</div>
 					)}
 				</div>
