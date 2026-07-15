@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/action"; // Import the logout action
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
 	const loggedInUser = useSelector((state) => state.loggedIn);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const location = useLocation();
 	const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown visibility
 
 	const handleLogout = () => {
 		dispatch(logoutUser());
 		navigate("/login"); // Redirect to login page after logout
 	};
+
+	// Netflix page has its own top bar (logo, search, cart, profile) — skip the global one to avoid overlap
+	if (location.pathname === "/netflix") {
+		return null;
+	}
 
 	// Return null if the user is not logged in
 	if (!loggedInUser) {

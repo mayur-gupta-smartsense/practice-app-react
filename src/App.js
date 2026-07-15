@@ -6,6 +6,8 @@ import DataTable from "./components/DataTable_user"; // Ensure case matches exac
 import Login from "./components/Login"; // Import the Login component
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import Project1 from "./components/Project1";
+import Netflix from "./components/Netflix";
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -35,6 +37,22 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<Login />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/project1"
+					element={
+						<ProtectedRoute>
+							<Project1 />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/netflix"
+					element={
+						<ProtectedRoute>
+							<Netflix />
 						</ProtectedRoute>
 					}
 				/>
