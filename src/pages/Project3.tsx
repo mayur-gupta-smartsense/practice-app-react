@@ -108,12 +108,21 @@ const lastNames = [
 
 const employeesJson: Employee[] = generateEmployees(60);
 */
-const levelStyles: Record<string, string> = {
-  L2: "bg-emerald-100 text-emerald-800",
-  L3: "bg-sky-100 text-sky-800",
-  L4: "bg-violet-100 text-violet-800",
-  L5: "bg-amber-100 text-amber-800",
+const levelStyles: Record<number, string> = {
+  2: "bg-emerald-100 text-emerald-800",
+  3: "bg-sky-100 text-sky-800",
+  4: "bg-violet-100 text-violet-800",
+  5: "bg-amber-100 text-amber-800",
 };
+
+const getDepartmentName = (departmentId: number): string =>
+  departments.find((dept) => dept.id === departmentId)?.name ?? "";
+
+const getDesignationName = (designationId: number): string =>
+  designationsByDept.find((desg) => desg.id === designationId)?.name ?? "";
+
+const getLevelName = (levelId: number): string =>
+  levels.find((lvl) => lvl.id === levelId)?.name ?? "";
 
 const formatDate = (isoDate: string): string =>
   new Date(isoDate).toLocaleDateString("en-IN", {
@@ -177,6 +186,13 @@ const Project3 = () => {
   if (employees.length === 0) {
     return <div>Loading...</div>;
   }  
+
+  const handleSave = (updatedEmployee: Employee) => {
+    setEmployees((prev) =>
+      prev.map((emp) => (emp === selectedEmployee ? updatedEmployee : emp))
+    );
+    closeModal();
+  };
 return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-10">
       <div className="mx-auto max-w-6xl">
@@ -219,19 +235,19 @@ return (
                     className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50"
                   >
                     <td className="px-5 py-3 text-slate-600">{employee.name}</td>
-                    <td className="px-5 py-3 text-slate-600">{employee.department}</td>
-                    <td className="px-5 py-3 text-slate-600">{employee.designation}</td>
+                    <td className="px-5 py-3 text-slate-600">{getDepartmentName(employee.departmentId)}</td>
+                    <td className="px-5 py-3 text-slate-600">{getDesignationName(employee.designationId)}</td>
                     <td className="px-5 py-4 text-slate-600">
                       {formatDate(employee.dateOfJoining)}
                     </td>
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ${
-                          levelStyles[employee.level] ??
+                          levelStyles[employee.levelId] ??
                           "bg-slate-100 text-slate-700"
                         }`}
                       >
-                        {employee.level}
+                        {getLevelName(employee.levelId)}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -278,7 +294,9 @@ return (
       >
         <EmployeeModalViewandEdit
           employee={selectedEmployee} 
-        editDisabled={editDisabled} />
+           editDisabled={editDisabled} 
+           onSave={handleSave}
+        />
         </Modal>
     </div>
   );
@@ -288,28 +306,33 @@ return (
 type EmployeeModalViewandEditProps = {
   employee: Employee | null;
   editDisabled?: boolean;
+  onSave: (employee: Employee) => void;
 };
 
 function EmployeeModalViewandEdit({
   employee,
   editDisabled = true,
+  onSave
 }: EmployeeModalViewandEditProps) {
 
-//   type Employee = {
-//   name: string;
-//   department: string;
-//   designation: string;
-//   dateOfJoining: string;
-//   level: string;
-// };
   const [name, setName] = useState(employee?.name || "");
-  const [department, setDepartment] = useState(employee?.department || "");
-  const [designation, setDesignation] = useState(employee?.designation || "");
-  const [level, setLevel] = useState(employee?.level || "");
+  const [departmentId, setDepartmentId] = useState(employee?.departmentId ?? 0);
+  const [designationId, setDesignationId] = useState(employee?.designationId ?? 0);
+  const [levelId, setLevelId] = useState(employee?.levelId ?? 0);
   const [dateOfJoining, setDateOfJoining] = useState(employee?.dateOfJoining || "");
   const inputClasses = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400";
   const labelClasses = "text-xs font-medium uppercase tracking-wide text-slate-500";
   const formattedDateOfJoining = dateOfJoining ? formatDate(dateOfJoining) : "";
+
+  const handleSaveClick = () => {
+    onSave({
+      name,
+      departmentId,
+      designationId,
+      levelId,
+      dateOfJoining,
+    });
+  };
 
   return (
     <div className="w-full max-w-sm">
@@ -333,14 +356,23 @@ function EmployeeModalViewandEdit({
       <label className="mt-4 block">
         <span className={labelClasses}>Department</span>
         <select
-          value={department}
+          value={departmentId}
           disabled={editDisabled}
-          onChange={(e) => setDepartment(e.target.value)}
+          onChange={(e) => {
+            const newDepartmentId = Number(e.target.value);
+            setDepartmentId(newDepartmentId);
+            const stillValid = designationsByDept.some(
+              (desg) => desg.id === designationId && desg.departmentId === newDepartmentId
+            );
+            if (!stillValid) {
+              setDesignationId(0);
+            }
+          }}
           className={inputClasses}
         >
           {departments.map((dept) => (
-            <option key={dept} value={dept}>
-              {dept}
+            <option key={dept.id} value={dept.id}>
+              {dept.name}
             </option>
           ))}
         </select>
@@ -349,30 +381,32 @@ function EmployeeModalViewandEdit({
       <label className="mt-4 block">
         <span className={labelClasses}>Designation</span>
         <select
-          value={designation}
+          value={designationId}
           disabled={editDisabled}
-          onChange={(e) => setDesignation(e.target.value)}
+          onChange={(e) => setDesignationId(Number(e.target.value))}
           className={inputClasses}
         >
-          {(designationsByDept[department] ?? []).map((desg) => (
-            <option key={desg} value={desg}>
-              {desg}
-            </option>
-          ))}
+          {designationsByDept
+            .filter((desg) => desg.departmentId === departmentId)
+            .map((desg) => (
+              <option key={desg.id} value={desg.id}>
+                {desg.name}
+              </option>
+            ))}
         </select>
       </label>
 
       <label className="mt-4 block">
         <span className={labelClasses}>Level</span>
         <select
-          value={level}
+          value={levelId}
           disabled={editDisabled}
-          onChange={(e) => setLevel(e.target.value)}
+          onChange={(e) => setLevelId(Number(e.target.value))}
           className={inputClasses}
         >
           {levels.map((lvl) => (
-            <option key={lvl} value={lvl}>
-              {lvl}
+            <option key={lvl.id} value={lvl.id}>
+              {lvl.name}
             </option>
           ))}
         </select>
@@ -392,6 +426,7 @@ function EmployeeModalViewandEdit({
       {!editDisabled && (
         <button
           type="button"
+          onClick={handleSaveClick}
           className="mt-6 w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
           Save
