@@ -2,7 +2,7 @@ import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
 import { useSelector } from "react-redux"; // useSelector retrieves data from the Redux store
 import { useNavigate } from "react-router-dom";
-import { ModifyUsers } from "./../redux/action"; // Import the addUser action creator
+import { ModifyUsers } from "../redux/action";
 
 DataTable.use(DT);
 function DataTable_user() {

@@ -1,13 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Entryform from "./components/Entryform";
-import DataTable from "./components/DataTable_user"; // Ensure case matches exactly
-import Login from "./components/Login"; // Import the Login component
+import Entryform from "./pages/Entryform";
+import DataTable from "./pages/DataTable_user";
+import Login from "./pages/Login";
+import Project1 from "./pages/Project1";
+import Netflix from "./pages/Netflix";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
-import Project1 from "./components/Project1";
-import Netflix from "./components/Netflix";
+import Project2 from "./pages/Project2";
+import Project3 from "./pages/Project3";
+
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -56,6 +59,24 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+                   <Route
+					path="/project2"
+					element={
+						<ProtectedRoute>
+							<Project2 />
+						</ProtectedRoute>
+					}
+				/>
+
+                  <Route
+					path="/project3"
+					element={
+						<ProtectedRoute>
+							<Project3 />
+						</ProtectedRoute>
+					}
+				/>
+
 				{/* Add the login route */}
 				<Route path="*" element={<ProtectedRoute></ProtectedRoute>} />
 				{/* Catch-all route */}

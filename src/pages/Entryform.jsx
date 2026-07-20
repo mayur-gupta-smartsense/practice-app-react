@@ -1,7 +1,7 @@
 import React, { Suspense, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux"; // useDispatch allows us to dispatch Redux actions
-import { addUser, logoutUser, ModifyUsers } from "./../redux/action"; // Import the addUser action creator
+import { addUser, logoutUser, ModifyUsers } from "../redux/action";
 import {ErrorBoundary} from "react-error-boundary";
 
 const Entryform = () => {

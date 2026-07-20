@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Entryform from "./components/Entryform";
-import DataTable from "./components/DataTable_user"; // Ensure case matches exactly
-import Login from "./components/Login"; // Import the Login component
+import Entryform from "./pages/Entryform";
+import DataTable from "./pages/DataTable_user";
+import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 

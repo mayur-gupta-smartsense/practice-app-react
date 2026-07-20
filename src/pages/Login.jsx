@@ -1,8 +1,8 @@
-// src/components/Login.jsx
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logIn } from "./../redux/action"; // Import the addUser action creator
+import { logIn } from "../redux/action";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
