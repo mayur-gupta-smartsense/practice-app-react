@@ -215,6 +215,7 @@ return (
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="overflow-x-auto p-4">
             <DataTable
+              key={employees.map((emp) => `${emp.name}-${emp.dateOfJoining}`).join("|")}
               className="display w-full text-left text-sm"
               options={{ pageLength: 10 }}
             >
@@ -303,13 +304,11 @@ return (
 };
 
 
-type EmployeeModalViewandEditProps = {
-  employee: Employee | null;
-  editDisabled?: boolean;
-  onSave: (employee: Employee) => void;
-};
 
-function EmployeeModalViewandEdit({
+
+
+/*
+function EmployeeModalViewandEdit1({
   employee,
   editDisabled = true,
   onSave
@@ -361,12 +360,12 @@ function EmployeeModalViewandEdit({
           onChange={(e) => {
             const newDepartmentId = Number(e.target.value);
             setDepartmentId(newDepartmentId);
-            const stillValid = designationsByDept.some(
-              (desg) => desg.id === designationId && desg.departmentId === newDepartmentId
-            );
-            if (!stillValid) {
-              setDesignationId(0);
-            }
+            // const stillValid = designationsByDept.some(
+            //   (desg) => desg.id === designationId && desg.departmentId === newDepartmentId
+            // );
+            // if (!stillValid) {
+            //   setDesignationId(0);
+            // }
           }}
           className={inputClasses}
         >
@@ -434,6 +433,131 @@ function EmployeeModalViewandEdit({
       )}
     </div>
   );
+}
+**/
+
+type EmployeeModalViewandEditProps = {
+  employee: Employee | null;
+  editDisabled?: boolean;
+  onSave: (employee: Employee) => void;
+};
+
+
+// type Employee = {
+//   name: string;
+//   departmentId: number;
+//   designationId: number;
+//   dateOfJoining: string;
+//   levelId: number;
+// };
+
+function EmployeeModalViewandEdit({
+  employee,
+  editDisabled=true,
+  onSave
+}:EmployeeModalViewandEditProps){
+const [name, setName] = useState(employee?.name || "");
+const [departmentId, setDepartmentId] = useState(employee?.departmentId || 0);
+const [designationId, setDesignationId] = useState(employee?.designationId || 0);
+const [levelId, setLevelId] = useState(employee?.levelId || 0);
+const [dateOfJoining, setDateOfJoining] = useState(employee?.dateOfJoining || "");
+const inputClasses = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400";
+const labelClasses = "text-xs font-medium uppercase tracking-wide text-slate-500";
+const handleSaveClick = ()=>{
+  onSave({
+    name,
+    departmentId,
+    designationId,
+    levelId,
+    dateOfJoining
+  })
+}
+return (
+  <div className="">
+    <h2 className="">
+      {editDisabled? "View Employee": "Edit Employeee"}
+    </h2>
+
+  <div>
+    <label>
+      <span>Name</span>
+      <input
+        type = "text"
+        value = {name}
+        onChange={(e)=>setName(e.target.value)}
+        disabled={editDisabled}
+      ></input>
+    </label>
+  </div>
+  
+  <div>
+    <label>
+      <span>Department</span>
+      <select
+        value={departmentId}
+        disabled={editDisabled}
+        onChange={ (e) =>  setDepartmentId(Number(e.target.value)) }
+      >
+        {departments.map((dept)=>(
+          <option value ={dept.id} key={dept.id}>
+            {dept.name}
+          </option>
+
+        ))}
+
+      </select>
+    </label>
+  </div>
+
+  <div>
+    <label>
+      <span>Designation</span>
+      <select
+        disabled={editDisabled}
+        onChange={ (e) =>  setDesignationId(Number(e.target.value)) }
+        value={designationId}
+      >
+        {designationsByDept.filter((desg) => desg.departmentId === departmentId).map((desg)=>(
+          <option value ={desg.id} key={desg.id}>
+            {desg.name}
+          </option> 
+        ))}
+
+      </select>
+    </label>
+  </div>
+
+    <div>
+    <label>
+      <span>Designation</span>
+      <select
+        disabled={editDisabled}
+        onChange={ (e) =>  setLevelId(Number(e.target.value)) }
+        value={levelId}
+      >
+        {levels.map((level)=>(
+          <option value ={level.id} key={level.id}>
+            {level.name}
+          </option> 
+        ))}
+
+      </select>
+    </label>
+  </div>
+      {!editDisabled && (
+        <button
+          type="button"
+          onClick={handleSaveClick}
+          className="mt-6 w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+        >
+          Save
+        </button>
+      )}
+
+  </div>
+)
+
+
 }
 
 export default Project3;
