@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Project2 from "./pages/Project2";
 import Project3 from "./pages/Project3";
+import Project4 from "./pages/Project4";
 
 
 function App() {
@@ -73,6 +74,15 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<Project3 />
+						</ProtectedRoute>
+					}
+				/>
+
+                  <Route
+					path="/project4"
+					element={
+						<ProtectedRoute>
+							<Project4 />
 						</ProtectedRoute>
 					}
 				/>
