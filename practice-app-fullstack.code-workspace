@@ -1,10 +1,76 @@
 {
 	"folders": [
 		{
+			"name": "practice-app-react",
 			"path": "."
 		},
 		{
+			"name": "practice-nest-be",
 			"path": "../practice-nest-be"
+		},
+		{
+			"path": "../shared-types"
 		}
-	]
+	],
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "chrome",
+				"request": "launch",
+				"name": "Launch Chrome against localhost",
+				"url": "http://localhost:3001",
+				"webRoot": "${workspaceFolder:practice-app-react}",
+				"sourceMaps": false
+			},
+			{
+				"type": "node",
+				"request": "attach",
+				"name": "Debug Nest (start:debug)",
+				"port": 9229,
+				"restart": true,
+				"preLaunchTask": "start:debug",
+				"skipFiles": ["<node_internals>/**"]
+			}
+		],
+		"compounds": [
+			{
+				"name": "Debug React + Nest",
+				"configurations": [
+					"Launch Chrome against localhost",
+					"Debug Nest (start:debug)"
+				],
+				"stopAll": true
+			}
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "start:debug",
+				"type": "shell",
+				"command": "npm run start:debug",
+				"isBackground": true,
+				"options": {
+					"cwd": "${workspaceFolder:practice-nest-be}"
+				},
+				"problemMatcher": {
+					"owner": "typescript",
+					"pattern": {
+						"regexp": "."
+					},
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "^.*(Starting compilation|File change detected).*$",
+						"endsPattern": "^.*(Nest application successfully started|Server running on port).*$"
+					}
+				},
+				"presentation": {
+					"reveal": "always",
+					"panel": "dedicated"
+				}
+			}
+		]
+	}
 }

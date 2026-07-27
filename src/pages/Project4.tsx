@@ -25,6 +25,7 @@ const Project4 = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [deletingFilename, setDeletingFilename] = useState<string | null>(null);
 
   const fetchImages = async () => {
     try {
@@ -40,7 +41,6 @@ const Project4 = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchImages();
   }, []);
@@ -48,13 +48,12 @@ const Project4 = () => {
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("file", file);
 
     try {
       setIsUploading(true);
@@ -72,7 +71,7 @@ const Project4 = () => {
       e.target.value = "";
     }
   };
-
+/** 
   const handleDownload = async (image: ImageItem) => {
     try {
       const response = await fetch(`${API_BASE_URL}${image.url}`);
@@ -89,8 +88,45 @@ const Project4 = () => {
     } catch (err) {
       setError("Download failed. Please try again.");
     }
+  };*/
+
+  const handleDownload = async (image: ImageItem) =>{
+        debugger;
+    let response =  await fetch(`${API_BASE_URL}${image.url}`)
+    if(!response.ok) return;
+    let blob = await response.blob(); 
+    debugger;
+      // Create blob link to download
+    const url = window.URL.createObjectURL(blob);
+    debugger;
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', image.filename);
+    // Append to html link element page
+    debugger;
+    document.body.appendChild(link);
+    // Start download
+    link.click();
+    // Clean up and remove the link
+    debugger;
+    link.parentNode?.removeChild(link);
   };
 
+  const handleDelete = async (image: ImageItem) => {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete "${image.filename}"`)
+    if(!confirmed)  return;
+    try{
+      setDeletingFilename(image.filename);
+      const response = await fetch(`${API_BASE_URL}/api/upload/${encodeURIComponent(image.filename)}`,{method:"DELETE"})
+      if (!response.ok) throw new Error("Delete Failed")
+      setImages((current) =>
+        current.filter((img) => img.filename !== image.filename)
+      );
+      setError(null)
+    } catch(err){
+          setError("Delete failed. Please try again.");
+    } 
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-10">
       <div className="mx-auto max-w-6xl">
@@ -102,7 +138,7 @@ const Project4 = () => {
             <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
               Image Uploads
             </h1>
-            <button
+            {/* <button
               type="button"
               onClick={handleUploadClick}
               disabled={isUploading}
@@ -117,7 +153,23 @@ const Project4 = () => {
               accept="image/*,.pdf"
               onChange={handleFileChange}
               className="hidden"
-            />
+            /> */}
+            <button
+             type="button"
+             onClick={handleUploadClick} 
+             disabled={isUploading}
+             className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+             >
+                            <UploadIcon/>
+              {isUploading ? "Uploading": "Upload"}
+              <input
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+
+               />
+            </button>
           </div>
           <p className="mt-2 text-slate-600">
             Upload an image or pdf and it will appear below with a preview and a download button.
@@ -138,11 +190,21 @@ const Project4 = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {images.map((image) => (
+           {images.map((image) => (
               <div
                 key={image.filename}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                className="relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
               >
+                <button
+                  type="button"
+                  onClick={() => handleDelete(image)}
+                  aria-label={`Delete ${image.filename}`}
+                  title="Delete"
+                  className="absolute right-2 top-2 z-10 rounded-full bg-white/90 px-2 py-1 text-lg leading-none text-slate-700 shadow hover:bg-white"
+                >
+                  ×
+                </button>
+            
                 <div className="flex aspect-square items-center justify-center bg-slate-50">
                   <img
                     src={`${API_BASE_URL}${image.url}`}
@@ -150,10 +212,12 @@ const Project4 = () => {
                     className="h-full w-full object-cover"
                   />
                 </div>
+            
                 <div className="flex items-center justify-between gap-2 p-3">
                   <span className="truncate text-xs text-slate-500" title={image.filename}>
                     {image.filename}
                   </span>
+            
                   <button
                     type="button"
                     onClick={() => handleDownload(image)}
