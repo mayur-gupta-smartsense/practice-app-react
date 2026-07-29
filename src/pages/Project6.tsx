@@ -9,35 +9,35 @@ const fieldsAdded = [
   { name: "Bio", type: "Textarea" },
 ];
 
-const submissions = [
-  {
-    id: "#001",
-    fullName: "Priya Sharma",
-    skills: "React, Node.js",
-    bio: "Frontend dev, 4 yrs exp...",
-    resume: "resume.pdf",
-    submitted: "2 hrs ago",
-    striped: false,
-  },
-  {
-    id: "#002",
-    fullName: "Arjun Mehta",
-    skills: "Python, SQL",
-    bio: "Data analyst, loves char...",
-    resume: "cv_arjun.pdf",
-    submitted: "5 hrs ago",
-    striped: true,
-  },
-  {
-    id: "#003",
-    fullName: "Sara Khan",
-    skills: "Figma, UX",
-    bio: "Product designer...",
-    resume: "portfolio.pdf",
-    submitted: "1 day ago",
-    striped: false,
-  },
-];
+// const submissions = [
+//   {
+//     id: "#001",
+//     fullName: "Priya Sharma",
+//     skills: "React, Node.js",
+//     bio: "Frontend dev, 4 yrs exp...",
+//     resume: "resume.pdf",
+//     submitted: "2 hrs ago",
+//     striped: false,
+//   },
+//   {
+//     id: "#002",
+//     fullName: "Arjun Mehta",
+//     skills: "Python, SQL",
+//     bio: "Data analyst, loves char...",
+//     resume: "cv_arjun.pdf",
+//     submitted: "5 hrs ago",
+//     striped: true,
+//   },
+//   {
+//     id: "#003",
+//     fullName: "Sara Khan",
+//     skills: "Figma, UX",
+//     bio: "Product designer...",
+//     resume: "portfolio.pdf",
+//     submitted: "1 day ago",
+//     striped: false,
+//   },
+// ];
 
 type Field = {
   _id: string;
@@ -77,6 +77,8 @@ const Project6 = () => {
   const [forms, setForms] = useState<FormItem[]>([]);
   const [formId, setFormId] = useState<string | null>(null);
   const [submissions, setSubmissions]  = useState<Submission[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchForms();
@@ -94,9 +96,9 @@ const Project6 = () => {
     try {
       setIsLoading(true);
       const response = await fetch(`${API_BASE_URL}/api/forms`);
-      if (!response.ok) throw new Error("Failed to load images");
+      if (!response.ok) throw new Error("Failed to load forms");
       const data:FormItem[] = await response.json();
-     
+      setForms(data)
     } catch (err) {
       setError("Could not load images from the server.");
     } finally {
@@ -109,7 +111,7 @@ const Project6 = () => {
       if(!formId) 
          return;
       const response = await fetch(`${API_BASE_URL}/api/forms/${formId}/submissions`);
-      if (!response.ok) throw new Error("Failed to load images");
+      if (!response.ok) throw new Error("Failed to load submissions");
       const data: Submission[] = await response.json();
       setSubmissions(data)
     } catch (err) {
@@ -120,6 +122,16 @@ const Project6 = () => {
   };
   return (
     <div className="flex h-screen w-full flex-col bg-[#f7fafa] overflow-hidden">
+      {error && (
+        <div className="w-full border-b border-red-200 bg-red-50 px-4 py-2 text-[13px] font-medium text-red-700">
+          {error}
+        </div>
+      )}
+      {isLoading && (
+        <div className="w-full border-b border-[#d9dbe0] bg-[#f0fafa] px-4 py-2 text-[13px] font-medium text-[#21262e]">
+          Loading...
+        </div>
+      )}
       {/* Top Row (65%) */}
       <div className="flex h-[65%] w-full items-start gap-px overflow-hidden">
         {/* Column 1 - Form Builder */}
@@ -169,9 +181,9 @@ const Project6 = () => {
             {/* Fields Added */}
             <div className="flex h-full w-1/2 flex-col gap-2 overflow-y-auto">
               <p className="w-full text-[13px] font-semibold text-[#737a85]">
-                Fields Added
+                Fields Added12
               </p>
-
+     {/**
               <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto">
                 {fieldsAdded.map((field) => (
                   <div
@@ -196,6 +208,10 @@ const Project6 = () => {
                   </div>
                 ))}
               </div>
+              */}
+              <button className="w-full rounded-lg bg-[#27e3ce] py-2.5 text-[13px] font-semibold text-[#21262e]">
+                Submit
+              </button>
             </div>
           </div>
         </div>
@@ -206,7 +222,7 @@ const Project6 = () => {
             Fill Form
           </p>
 
-          <div className="relative w-full">
+          {/* <div className="relative w-full">
             <select
               defaultValue="Employee Onboarding Form"
               className="w-full appearance-none whitespace-nowrap rounded-lg border-[1.5px] border-[#ffb703] bg-white px-3.5 py-2.5 pr-8 text-[13px] font-medium text-[#21262e]"
@@ -276,7 +292,7 @@ const Project6 = () => {
                 className="h-[70px] w-full resize-none rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] font-normal text-[#737a85] placeholder:text-[#737a85]"
               />
             </div>
-          </div>
+          </div> */}
 
           <button className="w-full rounded-lg bg-[#27e3ce] py-3 text-[14px] font-semibold text-[#21262e]">
             Submit
@@ -302,7 +318,7 @@ const Project6 = () => {
               </tr>
             </thead>
             <tbody>
-              {submissions.map((row) => (
+              {/* {submissions.map((row) => (
                 <tr
                   key={row.id}
                   className={`border-t border-[#e0e3e5] font-normal text-[#737a85] ${
@@ -316,7 +332,7 @@ const Project6 = () => {
                   <td className="px-4 py-2.5">{row.resume}</td>
                   <td className="px-4 py-2.5">{row.submitted}</td>
                 </tr>
-              ))}
+              ))} */}
             </tbody>
           </table>
         </div>
@@ -325,4 +341,4 @@ const Project6 = () => {
   );
 };
 
-export default Project6;
+export default Project6;// hmr-verify-1785331188

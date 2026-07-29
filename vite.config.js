@@ -29,6 +29,12 @@ export default defineConfig({
     port: 3001,
     host: true,
     open: false,
+    watch: {
+      // Native fs events don't fire reliably on Windows for folders under
+      // OneDrive sync (e.g. Documents), so fall back to polling.
+      usePolling: true,
+      interval: 100,
+    },
   },
   optimizeDeps: {
     esbuildOptions: {
