@@ -12,6 +12,7 @@ import Project2 from "./pages/Project2";
 import Project3 from "./pages/Project3";
 import Project4 from "./pages/Project4";
 import Project5 from "./pages/Project5";
+import Project6 from "./pages/Project6";
 
 
 function App() {
@@ -95,6 +96,15 @@ function App() {
 							<Project5 />
 						</ProtectedRoute>
 					}
+				/>
+
+                  <Route
+						path="/project6"
+						element={
+							<ProtectedRoute>
+								<Project6 />
+							</ProtectedRoute>
+						}
 				/>
 
 				{/* Add the login route */}
