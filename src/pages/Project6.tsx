@@ -39,20 +39,79 @@ const submissions = [
   },
 ];
 
+type Field = {
+  _id: string;
+  label: string;
+  type: string;
+  required: boolean;
+  order: number;
+};
+
+type FormItem = {
+  _id: string;
+  name: string;
+  fields: Field[];
+  archivedAt: string | null;
+  createdAt: string;
+};
+
+
+type UploadAnswer = {
+  path: string;
+  originalName: string;
+  size: number;
+  mimeType?: string;
+}
+type SubmissionAnswerValue = string | string[] | UploadAnswer;
+
+type Submission = {
+  _id: string;
+  formId: string;
+  answers: Record<string, SubmissionAnswerValue>;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 const Project6 = () => {
   // http://localhost:5000/api/forms
+  const [forms, setForms] = useState<FormItem[]>([]);
+  const [formId, setFormId] = useState<string | null>(null);
+  const [submissions, setSubmissions]  = useState<Submission[]>([]);
+
   useEffect(() => {
     fetchForms();
   }, []);
 
+  useEffect(() => {
+  if (forms.length) setFormId(forms[0]._id);
+}, [forms]);
+
+  useEffect(() => {
+    fetchSubmissions();
+}, [formId]);
+
   const fetchForms = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/uploads`);
+      const response = await fetch(`${API_BASE_URL}/api/forms`);
       if (!response.ok) throw new Error("Failed to load images");
-      const data = await response.json();
-      setImages(data);
-      setError(null);
+      const data:FormItem[] = await response.json();
+     
+    } catch (err) {
+      setError("Could not load images from the server.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSubmissions = async () => {
+    try {
+      if(!formId) 
+         return;
+      const response = await fetch(`${API_BASE_URL}/api/forms/${formId}/submissions`);
+      if (!response.ok) throw new Error("Failed to load images");
+      const data: Submission[] = await response.json();
+      setSubmissions(data)
     } catch (err) {
       setError("Could not load images from the server.");
     } finally {
