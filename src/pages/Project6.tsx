@@ -6,7 +6,7 @@ const fieldsAdded = [
   { name: "Profile Photo", type: "Image Upload" },
   { name: "Resume", type: "File Upload" },
   { name: "Skills", type: "Multiselect" },
-  { name: "Bio", type: "Textarea" },
+  { name: "Bio", type: "Textarea" }, 
 ];
 
 // const submissions = [
@@ -39,12 +39,18 @@ const fieldsAdded = [
 //   },
 // ];
 
+type FieldOption = {
+  _id: string;
+  label: string;
+};
+
 type Field = {
   _id: string;
   label: string;
   type: string;
   required: boolean;
   order: number;
+  options?: FieldOption[];
 };
 
 type FormItem = {
@@ -62,7 +68,7 @@ type UploadAnswer = {
   size: number;
   mimeType?: string;
 }
-type SubmissionAnswerValue = string | string[] | UploadAnswer;
+type SubmissionAnswerValue = string | string[] | UploadAnswer | File;
 
 type Submission = {
   _id: string;
@@ -79,6 +85,8 @@ const Project6 = () => {
   const [submissions, setSubmissions]  = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Record<string, SubmissionAnswerValue>>({});
+
 
   useEffect(() => {
     fetchForms();
@@ -88,19 +96,29 @@ const Project6 = () => {
   if (forms.length) setFormId(forms[0]._id);
 }, [forms]);
 
-  useEffect(() => {
-    fetchSubmissions();
-}, [formId]);
+
 
   const fetchForms = async () => {
     try {
       setIsLoading(true);
+      
       const response = await fetch(`${API_BASE_URL}/api/forms`);
-      if (!response.ok) throw new Error("Failed to load forms");
-      const data:FormItem[] = await response.json();
-      setForms(data)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.log("EWrrropr ---> ",errorData)
+        
+        const error = new Error(errorData.message || 'Failed to retrieve forms.');
+        (error as any).status = response.status;
+        (error as any).statusText = response.statusText;
+        throw error;
+      }
+      const data: FormItem[] = await response.json();
+      console.log("FetchForms",data);
+      setForms(data);
     } catch (err) {
-      setError("Could not load images from the server.");
+      console.log("Error contained.", err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -113,13 +131,68 @@ const Project6 = () => {
       const response = await fetch(`${API_BASE_URL}/api/forms/${formId}/submissions`);
       if (!response.ok) throw new Error("Failed to load submissions");
       const data: Submission[] = await response.json();
-      setSubmissions(data)
+   //   
+      console.log("FetchSubmissions",data);
+      setSubmissions(data);
     } catch (err) {
       setError("Could not load images from the server.");
     } finally {
       setIsLoading(false);
     }
   };
+  const submitIt = async () => {
+    const formData = new FormData();
+    const jsonAnswers: Record<string, string | string[]> = {};
+    Object.entries(answers).forEach(([fieldId, value]) => {
+      if (value instanceof File) {
+        formData.append(fieldId, value); // key = field._id
+      } else {
+        jsonAnswers[fieldId] = value as string | string[];
+      }
+    });
+    
+    formData.append("answers", JSON.stringify(jsonAnswers));
+    await fetch(`${API_BASE_URL}/api/forms/${formId}/submissions`, {
+      method: "POST",
+      body: formData, // don't set Content-Type manually — browser adds the multipart boundary
+    });
+
+  }
+   const changeMultiSelect = (e: React.ChangeEvent<HTMLInputElement>, fieldId:string)=>{
+      const optionId:string = e.target.value;
+       if(!e.target.checked){
+        const field = answers[fieldId].filter(x=> x!=optionId ) 
+        setAnswers({...answers, [fieldId]: field});
+        return
+       }
+       if(!answers[fieldId]){
+         setAnswers({...answers, [fieldId]: [optionId]})
+       } else{
+         //   
+            setAnswers({...answers, [fieldId]: [...answers[fieldId], optionId]})
+       }
+ //      
+   }
+
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldId:string)=>{
+      const file = e.target.files?.[0];
+      if(!file){
+       setAnswers(prev => {
+         const copy = { ...prev };
+         delete copy[fieldId];
+         return copy;
+      });
+      return
+      }
+     setAnswers({...answers, [fieldId]: file})
+    } 
+   
+  
+   useEffect(() => {
+    fetchSubmissions();
+    setAnswers({});
+  }, [formId]);
+
   return (
     <div className="flex h-screen w-full flex-col bg-[#f7fafa] overflow-hidden">
       {error && (
@@ -181,7 +254,7 @@ const Project6 = () => {
             {/* Fields Added */}
             <div className="flex h-full w-1/2 flex-col gap-2 overflow-y-auto">
               <p className="w-full text-[13px] font-semibold text-[#737a85]">
-                Fields Added12
+                Fields Added
               </p>
      {/**
               <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto">
@@ -210,7 +283,7 @@ const Project6 = () => {
               </div>
               */}
               <button className="w-full rounded-lg bg-[#27e3ce] py-2.5 text-[13px] font-semibold text-[#21262e]">
-                Submit
+                Submit2
               </button>
             </div>
           </div>
@@ -222,79 +295,127 @@ const Project6 = () => {
             Fill Form
           </p>
 
-          {/* <div className="relative w-full">
-            <select
+         <div className="relative w-full">
+            <select onChange={(e)=>setFormId(e.target.value)}
               defaultValue="Employee Onboarding Form"
               className="w-full appearance-none whitespace-nowrap rounded-lg border-[1.5px] border-[#ffb703] bg-white px-3.5 py-2.5 pr-8 text-[13px] font-medium text-[#21262e]"
             >
-              <option value="Employee Onboarding Form">
-                Employee Onboarding Form
+               {forms.map((form) => (
+
+              <option value={form._id} key={form._id} >
+                {form.name}
               </option>
+              
+              ))}
             </select>
             <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#737a85]">
-              ▾
+            
             </span>
           </div>
 
-          <div className="flex w-full flex-1 flex-col gap-4 overflow-y-auto">
-            <div className="flex w-full flex-col gap-1.5">
+          <div className="flex w/full flex-1 flex-col gap-4 overflow-y-auto">
+             {forms.find((f) => f._id === formId)?.fields?.sort((a, b) => a.order - b.order).map((field) => {
+              switch (field.type) {
+                case "textbox":
+                  return (
+            
+            <div key={field._id} className="flex w-full flex-col gap-1.5">
               <label className="text-[12px] font-medium text-[#737a85]">
-                Full Name (Textbox)
+               {field.label}
               </label>
               <input
                 type="text"
-                placeholder="Enter your full name"
+                onChange={(e)=>setAnswers({ ...answers, [field._id]:e.target.value })}
                 className="w-full rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] font-normal text-[#737a85] placeholder:text-[#737a85]"
               />
             </div>
-
-            <div className="flex w-full flex-col gap-1.5">
+            );
+                case "textarea":
+                  return (
+            <div key={field._id} className="flex w-full flex-col gap-1.5">
               <label className="text-[12px] font-medium text-[#737a85]">
-                Profile Photo (Image Upload)
+                {field.label}
+              </label>
+              <textarea
+                  onChange={(e)=>setAnswers({ ...answers, [field._id]:e.target.value })}
+                placeholder="Tell us about yourself..."
+                className="h-[70px] w-full resize-none rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] font-normal text-[#737a85] placeholder:text-[#737a85]"
+              />
+            </div>
+              );
+                case "image": 
+                  return (
+            <div key={field._id} className="flex w-full flex-col gap-1.5">
+              <label className="text-[12px] font-medium text-[#737a85]">
+              {field.label}
               </label>
               <label className="flex w-full cursor-pointer flex-col items-center gap-1 rounded-md border border-dashed border-[#d9dbe0] bg-[#f7fafa] px-3 py-[18px]">
-                <input type="file" accept="image/*" className="sr-only" />
+                <input type="file" 
+                  onChange={(e)=>handleFileChange(e, field._id)}
+                  accept="image/*" className="sr-only" />
                 <span className="text-[16px] text-[#ffb703]">⇧</span>
                 <span className="text-[11px] text-[#737a85]">
                   Click or drag image to upload
                 </span>
               </label>
             </div>
-
-            <div className="flex w-full flex-col gap-1.5">
+              );
+                case "file":
+                  return (
+            <div key={field._id} className="flex w-full flex-col gap-1.5">
               <label className="text-[12px] font-medium text-[#737a85]">
-                Resume (File Upload)
+                {field.label}
               </label>
               <label className="flex w-full cursor-pointer items-center gap-2 rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] text-[#737a85]">
-                <input type="file" className="sr-only" />
+                <input type="file"
+                 onChange={(e)=>handleFileChange(e, field._id)} 
+                className="sr-only" />
                 <span>📎</span>
                 <span>No file chosen</span>
               </label>
             </div>
-
-            <div className="flex w-full flex-col gap-1.5">
+              );
+            case "multiselect":
+                  return (
+            <div key={field._id} className="flex w-full flex-col gap-1.5">
               <label className="text-[12px] font-medium text-[#737a85]">
-                Skills (Multiselect)
+             {field.label}
               </label>
-              <input
-                type="text"
-                placeholder="React, Node.js  ·  + Add skill"
-                className="w-full rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] font-normal text-[#737a85] placeholder:text-[#737a85]"
-              />
+              <fieldset className="flex w-full flex-col gap-1.5 rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5">
+                <legend className="sr-only">   {field.label}</legend>
+                {field.options?.map((option) => (
+                <div key = {option._id} className="flex items-center gap-2">
+                  <input type="checkbox" onChange={(e) => changeMultiSelect(e, field._id,)}  value = {option._id} className="h-3.5 w-3.5" />
+                  <label htmlFor={option._id} className="text-[12px] font-normal text-[#737a85]">
+                    {option.label}
+                  </label>
+                </div>
+                ))}
+              </fieldset>
             </div>
+              );
+                case "dropdown":
+                  return (
+                    <div key={field._id} className="flex w-full flex-col gap-1.5">
+                      <label className="text-[12px] font-medium text-[#737a85]">
+                        {field.label}
+                      </label>
+                      <select
+                            onChange={(e)=>setAnswers({ ...answers, [field._id]:e.target.value })}
+                        className="w-full appearance-none rounded-lg border border-[#d9dbe0] bg-[#f7fafa] px-3.5 py-2.5 pr-8 text-[13px] text-[#21262e]"
+                      > {field.options?.map((option) => (
+                        <option key={option._id} value={option._id}>{option.label}</option>
+                      ))}
+                      </select>
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </div> 
 
-            <div className="flex w-full flex-col gap-1.5">
-              <label className="text-[12px] font-medium text-[#737a85]">
-                Bio (Textarea)
-              </label>
-              <textarea
-                placeholder="Tell us about yourself..."
-                className="h-[70px] w-full resize-none rounded-md border border-[#d9dbe0] bg-[#f7fafa] px-3 py-2.5 text-[12px] font-normal text-[#737a85] placeholder:text-[#737a85]"
-              />
-            </div>
-          </div> */}
-
-          <button className="w-full rounded-lg bg-[#27e3ce] py-3 text-[14px] font-semibold text-[#21262e]">
+          <button onClick = {submitIt} className="w-full rounded-lg bg-[#27e3ce] py-3 text-[14px] font-semibold text-[#21262e]">
             Submit
           </button>
         </div>
@@ -342,3 +463,55 @@ const Project6 = () => {
 };
 
 export default Project6;// hmr-verify-1785331188
+
+/*
+function DynamicForm({ fields }) {
+  return (
+    <div>
+      {fields.map((field) => {
+        switch (field.type) {
+          case "text":
+            return (
+              <input
+                key={field.id}
+                type="text"
+                placeholder={field.label}
+              />
+            );
+
+          case "textarea":
+            return (
+              <textarea
+                key={field.id}
+                placeholder={field.label}
+              />
+            );
+
+          case "select":
+            return (
+              <select key={field.id}>
+                {field.options?.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            );
+
+          case "checkbox":
+            return (
+              <label key={field.id}>
+                <input type="checkbox" />
+                {field.label}
+              </label>
+            );
+
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+*/

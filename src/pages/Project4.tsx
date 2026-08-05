@@ -91,24 +91,24 @@ const Project4 = () => {
   };*/
 
   const handleDownload = async (image: ImageItem) =>{
-        debugger;
+        
     let response =  await fetch(`${API_BASE_URL}${image.url}`)
     if(!response.ok) return;
     let blob = await response.blob(); 
-    debugger;
+    
       // Create blob link to download
     const url = window.URL.createObjectURL(blob);
-    debugger;
+    
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', image.filename);
     // Append to html link element page
-    debugger;
+    
     document.body.appendChild(link);
     // Start download
     link.click();
     // Clean up and remove the link
-    debugger;
+    
     link.parentNode?.removeChild(link);
   };
 
@@ -163,7 +163,7 @@ const Project4 = () => {
                             <UploadIcon/>
               {isUploading ? "Uploading": "Upload"}
               <input
-                type="file"
+                type="file"                                                             
                 className="hidden"
                 onChange={handleFileChange}
                 ref={fileInputRef}
