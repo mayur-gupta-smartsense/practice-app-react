@@ -40,7 +40,12 @@ const Navbar = () => {
 		<nav className="bg-gray-800 p-4 flex justify-end items-center text-white">
 			<div className="flex items-center">
 				{onProductPage && (
-					<div className="relative inline-block mr-4">
+					<button
+						type="button"
+						className="relative inline-block mr-4 bg-transparent border-none p-0 cursor-pointer text-white"
+						onClick={() => navigate("/cartsPage")}
+						aria-label="View cart"
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="w-6 h-6"
@@ -58,7 +63,7 @@ const Navbar = () => {
 								{cartCount}
 							</span>
 						)}
-					</div>
+					</button>
 				)}
 
 				<span className="mr-4">

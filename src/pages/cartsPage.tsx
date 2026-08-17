@@ -1,14 +1,19 @@
 // components/Cart.tsx
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { updateCart, removeCart } from '../store/cartSlice';
+import { updateCart, removeCart, addToCart } from '../store/cartSlice';
 import "./css/product.css"
 
 export default function Cart() {
   const cartItems = useAppSelector((state) => state.cart.items);   // { productId: qty }
   const products = useAppSelector((state) => state.product.byId); // full product details
   const dispatch = useAppDispatch();
-  dispatch(updateCart({id: "p1", qty: 34}))
-  dispatch(updateCart({id: "p2", qty: 4}))
+  const navigate = useNavigate();
+
+  // Seed the cart with a couple of items once on mount, for quick testing.
+  // Cleanup undoes the seed so React StrictMode's dev-only double-invoke
+  // (mount -> cleanup -> mount) doesn't double the quantities.
 
   // Combine cart quantities with live product data to build each cart row.
   // We calculate this fresh every render, so if price/stock changes live,
@@ -27,6 +32,13 @@ export default function Cart() {
   return (
     <div className="cart">
       <h2 className="cart-heading">
+        <button
+          className="cart-back"
+          onClick={() => navigate("/productpage")}
+          aria-label="Back to products"
+        >
+          ←
+        </button>
         Cart
         {lines.length > 0 && <span className="cart-count">{lines.length}</span>}
       </h2>
