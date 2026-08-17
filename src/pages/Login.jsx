@@ -1,16 +1,16 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logIn } from "../redux/action";
+import { logIn } from "../store/userSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
-	const users = useSelector((state) => state.users); // Get users from Redux state
+	const users = useAppSelector((state) => state.user.users); // Get users from Redux state
 	const navigate = useNavigate();
-	const dispatch = useDispatch(); // Get the dispatch function from Redux
+	const dispatch = useAppDispatch(); // Get the dispatch function from Redux
 	console.log("Here here");
 	const handleLogin = (e) => {
 		e.preventDefault();

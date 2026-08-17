@@ -1,15 +1,15 @@
 import DataTable from "datatables.net-react";
 import DT from "datatables.net-dt";
-import { useSelector } from "react-redux"; // useSelector retrieves data from the Redux store
+import { useAppSelector } from "../store/hooks"; // useAppSelector retrieves data from the Redux store
 import { useNavigate } from "react-router-dom";
-import { ModifyUsers } from "../redux/action";
+import { ModifyUsers } from "../store/userSlice";
 
 DataTable.use(DT);
 function DataTable_user() {
 	const navigate = useNavigate();
-	const userUserData = useSelector((state) => {
+	const userUserData = useAppSelector((state) => {
 		console.log("State in DataTable_user:", state);
-		return state.users;
+		return state.user.users;
 	});
 	// JSON.parse(localStorage.getItem("userData"));
 	userUserData.map((ele) => {

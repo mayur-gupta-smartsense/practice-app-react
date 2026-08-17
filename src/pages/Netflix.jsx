@@ -1,8 +1,8 @@
 // src/pages/Netflix.jsx
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../redux/action";
+import { logoutUser } from "../store/userSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const HERO = {
 	name: "Titan Steel 1L — Insulated Bottle",
@@ -67,8 +67,8 @@ const Netflix = () => {
 	const [cartCount, setCartCount] = useState(0);
 	const [toast, setToast] = useState("");
 	const [profileOpen, setProfileOpen] = useState(false);
-	const loggedInUser = useSelector((state) => state.loggedIn);
-	const dispatch = useDispatch();
+	const loggedInUser = useAppSelector((state) => state.user.loggedIn);
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const handleLogout = () => {

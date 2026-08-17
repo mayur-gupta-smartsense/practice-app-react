@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../store/hooks";
 
 const ProtectedRoute = ({ children }) => {
-	const isLoggedIn = useSelector((state) => state.loggedIn);
+	const isLoggedIn = useAppSelector((state) => state.user.loggedIn);
 	const location = useLocation(); // Get the current location
 
 	if (!isLoggedIn && location.pathname !== "/login") {

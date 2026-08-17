@@ -13,6 +13,8 @@ import Project3 from "./pages/Project3";
 import Project4 from "./pages/Project4";
 import Project5 from "./pages/Project5";
 import Project6 from "./pages/Project6";
+import ProductPage from "./pages/ProductPage";
+import Cart from "./pages/cartsPage"
 
 
 function App() {
@@ -103,6 +105,24 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<Project6 />
+							</ProtectedRoute>
+						}
+				/>
+				                 
+					<Route
+						path="/productpage"
+						element={
+							<ProtectedRoute>
+								<ProductPage />
+							</ProtectedRoute>
+						}
+				/>
+
+					<Route
+						path="/cartsPage"
+						element={
+							<ProtectedRoute>
+								<Cart />
 							</ProtectedRoute>
 						}
 				/>

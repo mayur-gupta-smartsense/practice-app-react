@@ -11,6 +11,9 @@
 # production
 /build
 
+# stray tsc output
+src/**/dist/
+
 # misc
 .DS_Store
 .env.local

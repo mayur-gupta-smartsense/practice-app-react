@@ -1,13 +1,13 @@
 import React, { Suspense, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux"; // useDispatch allows us to dispatch Redux actions
-import { addUser, logoutUser, ModifyUsers } from "../redux/action";
+import { addUser, logoutUser, ModifyUsers } from "../store/userSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks"; // useAppDispatch allows us to dispatch Redux actions
 import {ErrorBoundary} from "react-error-boundary";
 
 const Entryform = () => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch(); // Get the dispatch function from Redux
-	const usersData = useSelector((state) => state.users);
+	const dispatch = useAppDispatch(); // Get the dispatch function from Redux
+	const usersData = useAppSelector((state) => state.user.users);
 	const location = useLocation();
 	const queryParams = new URLSearchParams(location.search);
 	const emailFromParams = queryParams.get("email");
@@ -274,3 +274,8 @@ function Child({ value }) {
 	return <div>child has value: {value}</div>;
   }
 export default Entryform;
+
+
+
+
+
