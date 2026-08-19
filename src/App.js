@@ -15,7 +15,8 @@ import Project5 from "./pages/Project5";
 import Project6 from "./pages/Project6";
 import ProductPage from "./pages/ProductPage";
 import Cart from "./pages/cartsPage"
-
+import Cart2 from "./pages/cartsPage2"
+import NewSearch from "./pages/newSearch";
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -123,6 +124,23 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<Cart />
+							</ProtectedRoute>
+						}
+				/>
+				  <Route
+						path="/cartsPage2"
+						element={
+							<ProtectedRoute>
+								<Cart2 />
+							</ProtectedRoute>
+						}
+				/>
+
+				<Route
+						path="/newSearch"
+						element={
+							<ProtectedRoute>
+								<NewSearch />
 							</ProtectedRoute>
 						}
 				/>

@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
 	const loggedInUser = useAppSelector((state) => state.user.loggedIn);
-	debugger;
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
