@@ -17,6 +17,7 @@ import ProductPage from "./pages/ProductPage";
 import Cart from "./pages/cartsPage"
 import Cart2 from "./pages/cartsPage2"
 import NewSearch from "./pages/newSearch";
+import Autocomplete from "./pages/practice_css/autocomplete";
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -141,6 +142,15 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<NewSearch />
+							</ProtectedRoute>
+						}
+				/>
+
+		      <Route
+						path="/autocomplete"
+						element={
+							<ProtectedRoute>
+								<Autocomplete />
 							</ProtectedRoute>
 						}
 				/>
