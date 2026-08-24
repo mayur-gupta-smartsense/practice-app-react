@@ -18,6 +18,12 @@ import Cart from "./pages/cartsPage"
 import Cart2 from "./pages/cartsPage2"
 import NewSearch from "./pages/newSearch";
 import Autocomplete from "./pages/practice_css/autocomplete";
+import Kanban from "./pages/practice_css/kanaban";
+import ProgressBar from "./pages/practice_css/progressbar";
+import Form from "./pages/practice_css/form";
+import Progressbar2 from "./pages/practice_css/progressbar2";
+import Kanban2 from "./pages/practice_css/kanban2";
+import Form2 from "./pages/practice_css/form2";
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -151,6 +157,57 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<Autocomplete />
+							</ProtectedRoute>
+						}
+				/>
+
+				 <Route
+						path="/kanban"
+						element={
+							<ProtectedRoute>
+								<Kanban />
+							</ProtectedRoute>
+						}
+				/>
+
+					<Route
+						path="/progressbar"
+						element={
+							<ProtectedRoute>
+								<ProgressBar />
+							</ProtectedRoute>
+						}
+				/>
+					<Route
+						path="/progressbar2"
+						element={
+							<ProtectedRoute>
+								<Progressbar2 />
+							</ProtectedRoute>
+						}
+				/>
+					<Route
+						path="/kanban2"
+						element={
+							<ProtectedRoute>
+								<Kanban2 />
+							</ProtectedRoute>
+						}
+				/>
+
+					<Route
+						path="/form"
+						element={
+							<ProtectedRoute>
+								<Form />
+							</ProtectedRoute>
+						}
+				/>
+				<Route
+						path="/form2"
+						element={
+							<ProtectedRoute>
+								<Form2 />
 							</ProtectedRoute>
 						}
 				/>
