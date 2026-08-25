@@ -24,6 +24,8 @@ import Form from "./pages/practice_css/form";
 import Progressbar2 from "./pages/practice_css/progressbar2";
 import Kanban2 from "./pages/practice_css/kanban2";
 import Form2 from "./pages/practice_css/form2";
+import DataTable2 from "./pages/practice_css/datatable";
+
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -208,6 +210,15 @@ function App() {
 						element={
 							<ProtectedRoute>
 								<Form2 />
+							</ProtectedRoute>
+						}
+				/>
+
+				<Route
+						path="/datatable"
+						element={
+							<ProtectedRoute>
+								<DataTable2 />
 							</ProtectedRoute>
 						}
 				/>
