@@ -16,7 +16,7 @@ import Project6 from "./pages/Project6";
 import ProductPage from "./pages/ProductPage";
 import Cart from "./pages/cartsPage"
 import Cart2 from "./pages/cartsPage2"
-import NewSearch from "./pages/newSearch";
+import NewSearch from "./pages/practice_css/newSearch";
 import Autocomplete from "./pages/practice_css/autocomplete";
 import Kanban from "./pages/practice_css/kanaban";
 import ProgressBar from "./pages/practice_css/progressbar";
@@ -25,7 +25,11 @@ import Progressbar2 from "./pages/practice_css/progressbar2";
 import Kanban2 from "./pages/practice_css/kanban2";
 import Form2 from "./pages/practice_css/form2";
 import DataTable2 from "./pages/practice_css/datatable";
-
+import UserDataTable2 from "./pages/practice_css/datatable2";
+import ShoppingCart from "./pages/practice_css/shopping-cart";
+import ShoppingCart2 from "./pages/practice_css/shopping-cart2";
+import MultiStepWizard from "./pages/practice_css/multi-step-wizard";
+import MultiStepWizard2 from "./pages/practice_css/multi-step-wizard2";
 
 function App() {
 	//	const location = useLocation(); // Get the current location
@@ -222,6 +226,58 @@ function App() {
 							</ProtectedRoute>
 						}
 				/>
+
+				<Route
+						path="/datatable2"
+						element={
+							<ProtectedRoute>
+								<UserDataTable2 />
+							</ProtectedRoute>
+						}
+				/>
+					<Route
+						path="/shoppingCart"
+						element={
+							<ProtectedRoute>
+								<ShoppingCart />
+							</ProtectedRoute>
+						}
+				/>
+					<Route
+						path="/shoppingCart"
+						element={
+							<ProtectedRoute>
+								<ShoppingCart />
+							</ProtectedRoute>
+						}
+				/>
+				<Route
+						path="/shoppingCart2"
+						element={
+							<ProtectedRoute>
+								<ShoppingCart2 />
+							</ProtectedRoute>
+						}
+				/>
+				
+						<Route
+						path="/multiStepWizard"
+						element={
+							<ProtectedRoute>
+								<MultiStepWizard />
+							</ProtectedRoute>
+						}
+				/>
+				
+										<Route
+						path="/multiStepWizard2"
+						element={
+							<ProtectedRoute>
+								<MultiStepWizard2 />
+							</ProtectedRoute>
+						}
+				/>
+
 
 				{/* Add the login route */}
 				<Route path="*" element={<ProtectedRoute></ProtectedRoute>} />
