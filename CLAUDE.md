@@ -11,3 +11,8 @@ real semantic HTML based on what they represent, not their literal shape:
 - Toggle-shaped elements → <input type="checkbox"> or a real toggle component
 
 Never emit a plain <div>/<p> for something that is clearly a form control.
+
+## Explanation style
+
+When explaining code, concepts, or bugs, keep it simple and short, and include
+a concrete example — unless the user says otherwise for that request.
